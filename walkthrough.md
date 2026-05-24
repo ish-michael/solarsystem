@@ -56,9 +56,16 @@ Die Datenstruktur wurde in [types.ts](file:///Users/michael/Documents/AntiTest/s
 - **Lösung**: Die Generierung des Sternenfeldes wurde aus der Render-Funktion heraus auf Modulebene verschoben. Die Sterne werden nun einmalig beim Laden der Komponente generiert. Das sorgt für 100%ige Konformität mit React 19 und eine verbesserte Performance, da das Feld bei Re-Renders nicht neu evaluiert werden muss.
 - **Typen-Bereinigung**: Ein ungenutzter Parameter `_planetId` in `SolarSystem.tsx` wurde entfernt, um alle TypeScript-Compiler-Warnungen zu beseitigen.
 
+### 4. Behebung des WebKit/Safari-Grafikbugs (Phase 2.2)
+- **Fehler**: Die Bilder wurden im Netzwerk geladen und als decodiert (z. B. `1024x1024px`) erkannt, blieben jedoch physisch unsichtbar. Ursache war ein bekannter Grafik-Rendering-Bug in WebKit/Safari bei der Verwendung von `backdrop-filter` (backdrop-blur-md) auf Eltern-Elementen in Kombination mit absolut positionierten Overlays (`inset-0`).
+- **Lösung**: 
+  1. Das absolute Overlay-Div mit dem Radial-Gradienten über dem Bild wurde entfernt.
+  2. Der atmosphärische Schein (Glow) wurde als dynamischer, hardwarebeschleunigter Schatten (`boxShadow`) direkt auf den Bildcontainer gelegt.
+  3. Dem Bild und seinem Container wurden `transform: translateZ(0)` und `backface-visibility: hidden` zugewiesen, um eine hardwarebeschleunigte Grafik-Ebene (GPU-Compositing) zu erzwingen, wodurch WebKit gezwungen wird, das Bild korrekt zu zeichnen.
+
 ---
 
 ## 🛠️ Verifikations-Ergebnis
 - **Linter**: `npm run lint` schließt erfolgreich mit **0 Fehlern und 0 Warnungen** ab.
 - **Build-Ergebnis**: Erfolgreich abgeschlossen mit `npm run build` – **0 Fehler, 0 Warnungen**.
-- **Performance**: Skalierung, Umlaufbahnen, Proben und starmap-Gitter arbeiten reibungslos im Browser.
+- **Performance**: Skalierung, Umlaufbahnen, Proben und starmap-Gitter arbeiten reibungslos im Browser. GPU-Compositing sorgt für absolut flüssige Bildübergänge.
