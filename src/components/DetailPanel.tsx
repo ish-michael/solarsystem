@@ -147,13 +147,30 @@ export default function DetailPanel({
       </div>
 
       {/* Realistic NASA-style Planet Image */}
-      <div className={`relative w-full rounded-2xl overflow-hidden mb-5 border shadow-xl group ${
-        isLightTheme ? 'border-stone-200/80 bg-stone-200/50' : 'border-slate-800 bg-slate-900/60'
-      }`}>
+      <div 
+        className={`relative w-full rounded-2xl overflow-hidden mb-5 border shadow-xl group ${
+          isLightTheme ? 'border-stone-200/80 bg-stone-200/50' : 'border-slate-800 bg-slate-900/60'
+        }`}
+        style={{
+          boxShadow: isLightTheme 
+            ? '0 10px 25px -5px rgba(0,0,0,0.05)' 
+            : `0 15px 35px -10px ${selectedPlanet?.glowColor || 'rgba(245, 158, 11, 0.4)'}`,
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden'
+        }}
+      >
         <img 
           src={imagePath} 
           alt={`NASA Teleskopaufnahme von ${title}`} 
           className="w-full h-48 sm:h-64 lg:h-72 object-cover group-hover:scale-105 transition-transform duration-700 select-none" 
+          style={{
+            transform: 'translateZ(0)',
+            WebkitTransform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden'
+          }}
           onLoad={(e) => {
             setLoadStatus('success');
             const target = e.currentTarget;
@@ -161,14 +178,6 @@ export default function DetailPanel({
           }}
           onError={() => {
             setLoadStatus('error');
-          }}
-        />
-        {/* Dynamic atmospheric radial glow outline matching planet colors */}
-        <div 
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-          style={{
-            background: `radial-gradient(circle at center, transparent 35%, ${selectedPlanet?.glowColor || 'rgba(245, 158, 11, 0.25)'} 100%)`,
-            opacity: isLightTheme ? 0.35 : 0.5
           }}
         />
       </div>
