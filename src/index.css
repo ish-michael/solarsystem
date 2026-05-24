@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+
+:root {
+  font-family: 'Space Grotesk', 'Outfit', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: #030712; /* gray-950 */
+  color: #f3f4f6; /* gray-100 */
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* Star twinkling animation */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+    fill: #ffffff;
+  }
+}
+
+/* Custom Scrollbar for side panel */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(3, 7, 18, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.4);
+}
+
+/* Glow effects */
+.glow-sun {
+  filter: drop-shadow(0 0 35px rgba(245, 158, 11, 0.6));
+}
+
+.glow-planet {
+  filter: drop-shadow(0 0 15px var(--glow-color));
+}
+
+.orbit-line {
+  transition: stroke 0.3s ease, stroke-width 0.3s ease;
+}
+
+.orbit-line:hover {
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1.5px;
+}
+
+/* Moon focus slide animation transition styles */
+.transition-all-300 {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.transition-transform-1000 {
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Forward rotation for orbits */
+@keyframes orbit-rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-orbit {
+  animation: orbit-rotation linear infinite;
+  transform-origin: 0 0;
+  transform-box: view-box;
+}
+
+/* Counter-rotation for keeping text upright */
+@keyframes orbit-rotation-reverse {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-orbit-reverse {
+  animation: orbit-rotation-reverse linear infinite;
+  transform-origin: 0 0;
+  transform-box: view-box;
+}
+
+/* Light Theme (Antique Celestial Chart / Blueprint Style) */
+body.light-theme {
+  background-color: #fafaf9; /* stone-50 warm parchment */
+  color: #1c1917; /* stone-900 */
+}
+
+body.light-theme::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Change twinkles to golden points in Light Theme */
+body.light-theme circle[fill="#ffffff"] {
+  fill: #d97706; /* amber-600 */
+  opacity: 0.6;
+}
+
+body.light-theme .glow-sun {
+  filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.4));
+}
+
+body.light-theme .glow-planet {
+  filter: drop-shadow(0 0 10px var(--glow-color));
+}
+
+
+
