@@ -139,12 +139,12 @@ export default function DetailPanel({
 
       {/* Realistic NASA-style Planet Image */}
       <div className={`relative w-full rounded-2xl overflow-hidden mb-5 border shadow-xl group ${
-        isLightTheme ? 'border-stone-200/80' : 'border-slate-800'
+        isLightTheme ? 'border-stone-200/80 bg-stone-200/50' : 'border-slate-800 bg-slate-900/60'
       }`}>
         <img 
           src={imagePath} 
           alt={`NASA Teleskopaufnahme von ${title}`} 
-          className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-700 select-none" 
+          className="w-full h-48 sm:h-64 lg:h-72 object-cover group-hover:scale-105 transition-transform duration-700 select-none" 
         />
         {/* Dynamic atmospheric radial glow outline matching planet colors */}
         <div 
