@@ -53,7 +53,7 @@ export default function DetailPanel({
   const moonItemClass = isLightTheme ? 'hover:bg-stone-200/40 border-stone-200/40' : 'hover:bg-slate-900/40 border-slate-800/40';
 
   return (
-    <aside className={`w-full lg:w-[460px] backdrop-blur-md p-6 flex flex-col overflow-y-auto shadow-2xl z-10 transition-all duration-300 ${containerClass}`}>
+    <aside className={`w-full lg:w-[460px] p-6 flex flex-col overflow-y-auto shadow-2xl z-10 transition-all duration-300 ${containerClass}`}>
       
       {/* Header section with Name and the interactive Focus Button */}
       <div className={`flex items-center justify-between border-b pb-4 mb-5 ${isLightTheme ? 'border-stone-200' : 'border-slate-800'}`}>
@@ -123,30 +123,20 @@ export default function DetailPanel({
 
       {/* Realistic NASA-style Planet Image */}
       <div 
-        className={`relative w-full rounded-2xl overflow-hidden mb-5 border shadow-xl group ${
-          isLightTheme ? 'border-stone-200/80 bg-stone-200/50' : 'border-slate-800 bg-slate-900/60'
-        }`}
+        className="relative w-full mb-5 shadow-xl"
         style={{
           boxShadow: isLightTheme 
             ? '0 10px 25px -5px rgba(0,0,0,0.05)' 
             : `0 15px 35px -10px ${selectedPlanet?.glowColor || 'rgba(245, 158, 11, 0.4)'}`,
-          height: '240px',
-          transform: 'translateZ(0)',
-          WebkitTransform: 'translateZ(0)',
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden'
+          height: '240px'
         }}
       >
         <img 
           src={imagePath} 
           alt={`NASA Teleskopaufnahme von ${title}`} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 select-none" 
-          style={{
-            transform: 'translateZ(0)',
-            WebkitTransform: 'translateZ(0)',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
-          }}
+          className={`w-full h-full object-cover rounded-2xl border select-none ${
+            isLightTheme ? 'border-stone-200/80 bg-stone-200/50' : 'border-slate-800 bg-slate-900/60'
+          }`}
         />
       </div>
 
