@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Planet, SunData } from '../types';
 import { Sparkles, Thermometer, Globe, Compass, Clock, Milestone, Wind, Layers } from 'lucide-react';
 
@@ -24,6 +24,15 @@ export default function DetailPanel({
   const temp = selectedPlanet ? selectedPlanet.tempC : sunData.tempC;
   const diameter = selectedPlanet ? selectedPlanet.diameterKm : sunData.diameterKm;
   const imagePath = selectedPlanet ? selectedPlanet.imagePath : sunData.imagePath;
+
+  const [loadStatus, setLoadStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [imageMeta, setImageMeta] = useState<string>('');
+
+  // Reset load status when imagePath changes
+  useEffect(() => {
+    setLoadStatus('loading');
+    setImageMeta('');
+  }, [imagePath]);
 
   // Diagnostic fetch to verify image loading payload
   useEffect(() => {
@@ -145,6 +154,14 @@ export default function DetailPanel({
           src={imagePath} 
           alt={`NASA Teleskopaufnahme von ${title}`} 
           className="w-full h-48 sm:h-64 lg:h-72 object-cover group-hover:scale-105 transition-transform duration-700 select-none" 
+          onLoad={(e) => {
+            setLoadStatus('success');
+            const target = e.currentTarget;
+            setImageMeta(`${target.naturalWidth}x${target.naturalHeight}px`);
+          }}
+          onError={() => {
+            setLoadStatus('error');
+          }}
         />
         {/* Dynamic atmospheric radial glow outline matching planet colors */}
         <div 
@@ -155,8 +172,13 @@ export default function DetailPanel({
           }}
         />
       </div>
-      <div className="text-[9px] text-center opacity-40 -mt-3 mb-4 font-mono break-all">
-        MIME-Check & Pfad: {imagePath}
+      <div className="text-[10px] text-center -mt-3 mb-4 font-mono break-all flex flex-col gap-0.5">
+        <div className="opacity-45">Pfad: {imagePath}</div>
+        <div className="font-bold flex items-center justify-center gap-1.5">
+          {loadStatus === 'loading' && <span className="text-amber-500 animate-pulse">⏳ Lädt Bild...</span>}
+          {loadStatus === 'success' && <span className="text-emerald-500">✅ Erfolgreich geladen ({imageMeta})</span>}
+          {loadStatus === 'error' && <span className="text-red-500">❌ Fehler beim Laden (Bilddatei nicht lesbar)</span>}
+        </div>
       </div>
 
       {/* Description */}
