@@ -5,6 +5,7 @@ import App from './App.tsx'
 
 // Load SAP UI5 Web Components assets (themes, translations)
 import '@ui5/webcomponents-react/dist/Assets.js';
+import '@ui5/webcomponents-fiori/dist/Assets.js';
 
 // Clean up any active service worker during local development to prevent caching issues
 if (import.meta.env.DEV && 'serviceWorker' in navigator) {
