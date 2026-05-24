@@ -48,7 +48,7 @@ function App() {
       <StarField />
 
       {/* Main Solar System Viewer */}
-      <main className={`flex-1 relative flex flex-col h-[65vh] lg:h-full overflow-hidden border-b lg:border-b-0 ${
+      <main className={`flex-1 relative flex flex-col h-[50vh] lg:h-full overflow-hidden border-b lg:border-b-0 ${
         isLightTheme ? 'border-stone-200' : 'border-slate-800'
       }`}>
         

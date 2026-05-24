@@ -53,7 +53,7 @@ export default function DetailPanel({
   const moonItemClass = isLightTheme ? 'hover:bg-stone-200/40 border-stone-200/40' : 'hover:bg-slate-900/40 border-slate-800/40';
 
   return (
-    <aside className={`w-full lg:w-[460px] p-6 flex flex-col overflow-y-auto shadow-2xl z-10 transition-all duration-300 ${containerClass}`}>
+    <aside className={`w-full lg:w-[460px] flex-1 min-h-0 lg:flex-none p-6 flex flex-col overflow-y-auto shadow-2xl z-10 transition-all duration-300 ${containerClass}`}>
       
       {/* Header section with Name and the interactive Focus Button */}
       <div className={`flex items-center justify-between border-b pb-4 mb-5 ${isLightTheme ? 'border-stone-200' : 'border-slate-800'}`}>
