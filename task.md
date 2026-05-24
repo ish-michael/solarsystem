@@ -1,0 +1,34 @@
+# Task List: Solar System Explainer - Phase 2
+
+- [x] Project Asset Structure
+  - [x] Create `public/assets/` directory
+- [x] Image Assets Generation
+  - [x] Generate NASA-style Sun image (`sun.png`)
+  - [x] Generate NASA-style Mercury image (`mercury.png`)
+  - [x] Generate NASA-style Venus image (`venus.png`)
+  - [x] Generate NASA-style Earth image (`earth.png`)
+  - [x] Generate NASA-style Mars image (`mars.png`)
+  - [x] Generate NASA-style Jupiter image (`jupiter.png`)
+  - [x] Download high-res Saturn image (`saturn.png`)
+  - [x] Download high-res Uranus image (`uranus.png`)
+  - [x] Download high-res Neptune image (`neptune.png`)
+- [x] Types & Planet Data Sheet Updates
+  - [x] Update `src/types.ts` with atmosphere, surface, discovery, and image fields
+  - [x] Update `src/data/solarSystemData.ts` with detailed German facts and values
+- [x] CSS Foundation (Dark/Light Mode & Glows)
+  - [x] Update `src/index.css` with light-mode Starmap theme tokens, coordinate animations, and glow filters
+- [x] UI Component Integrations
+  - [x] Update `src/App.tsx` (theme switcher, probes toggle state, probes button layout)
+  - [x] Update `src/components/DetailPanel.tsx` (NASA planet images display, atmosphere, surface, discovery specs layout)
+  - [x] Update `src/components/SolarSystem.tsx` (Light/Dark styling, Voyager/New Horizons system paths, Cassini/Juno focused orbits)
+- [x] Verification & Build
+  - [x] Run `npm run build` to confirm compilation
+  - [x] Verify light mode starmap contrast and readability
+  - [x] Verify probe paths and orbits
+- [x] Image Loading & Purity Fixes (Phase 2.1)
+  - [x] Rename planet images from `.png` to `.jpg` (since they are JPEG files) to prevent browser blocking due to strict MIME-type sniffing (`nosniff` headers)
+  - [x] Update imports in `src/data/solarSystemData.ts` to reference `.jpg`
+  - [x] Configure `base: './'` in `vite.config.ts` to ensure assets load correctly in subdirectories or local path previewing
+  - [x] Refactor `src/components/StarField.tsx` to generate star coordinates outside the component, satisfying React 19 rendering purity rules
+  - [x] Fix TypeScript compiler warnings for unused parameter `_planetId` in `SolarSystem.tsx`
+  - [x] Run linter `npm run lint` and build `npm run build` to ensure 100% clean check status
