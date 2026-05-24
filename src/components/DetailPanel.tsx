@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import type { Planet, SunData } from '../types';
 import { Sparkles, Thermometer, Globe, Compass, Clock, Milestone, Wind, Layers } from 'lucide-react';
 
@@ -25,31 +24,7 @@ export default function DetailPanel({
   const diameter = selectedPlanet ? selectedPlanet.diameterKm : sunData.diameterKm;
   const imagePath = selectedPlanet ? selectedPlanet.imagePath : sunData.imagePath;
 
-  const [loadStatus, setLoadStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [imageMeta, setImageMeta] = useState<string>('');
 
-  // Reset load status when imagePath changes
-  useEffect(() => {
-    setLoadStatus('loading');
-    setImageMeta('');
-  }, [imagePath]);
-
-  // Diagnostic fetch to verify image loading payload
-  useEffect(() => {
-    if (!imagePath) return;
-    fetch(imagePath)
-      .then(res => {
-        const contentType = res.headers.get('content-type');
-        console.log(`[Diagnostic] Image: ${imagePath} | Content-Type: ${contentType} | Status: ${res.status}`);
-        return res.text();
-      })
-      .then(text => {
-        console.log(`[Diagnostic] First 100 chars:`, text.substring(0, 100));
-      })
-      .catch(err => {
-        console.error(`[Diagnostic] Fetch failed:`, err);
-      });
-  }, [imagePath]);
   const atmosphere = selectedPlanet ? selectedPlanet.atmosphere : sunData.atmosphere;
   const surface = selectedPlanet ? selectedPlanet.surface : sunData.surface;
   
@@ -155,6 +130,7 @@ export default function DetailPanel({
           boxShadow: isLightTheme 
             ? '0 10px 25px -5px rgba(0,0,0,0.05)' 
             : `0 15px 35px -10px ${selectedPlanet?.glowColor || 'rgba(245, 158, 11, 0.4)'}`,
+          height: '240px',
           transform: 'translateZ(0)',
           WebkitTransform: 'translateZ(0)',
           backfaceVisibility: 'hidden',
@@ -164,30 +140,14 @@ export default function DetailPanel({
         <img 
           src={imagePath} 
           alt={`NASA Teleskopaufnahme von ${title}`} 
-          className="w-full h-48 sm:h-64 lg:h-72 object-cover group-hover:scale-105 transition-transform duration-700 select-none" 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 select-none" 
           style={{
             transform: 'translateZ(0)',
             WebkitTransform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden'
           }}
-          onLoad={(e) => {
-            setLoadStatus('success');
-            const target = e.currentTarget;
-            setImageMeta(`${target.naturalWidth}x${target.naturalHeight}px`);
-          }}
-          onError={() => {
-            setLoadStatus('error');
-          }}
         />
-      </div>
-      <div className="text-[10px] text-center -mt-3 mb-4 font-mono break-all flex flex-col gap-0.5">
-        <div className="opacity-45">Pfad: {imagePath}</div>
-        <div className="font-bold flex items-center justify-center gap-1.5">
-          {loadStatus === 'loading' && <span className="text-amber-500 animate-pulse">⏳ Lädt Bild...</span>}
-          {loadStatus === 'success' && <span className="text-emerald-500">✅ Erfolgreich geladen ({imageMeta})</span>}
-          {loadStatus === 'error' && <span className="text-red-500">❌ Fehler beim Laden (Bilddatei nicht lesbar)</span>}
-        </div>
       </div>
 
       {/* Description */}
