@@ -6,7 +6,13 @@ import SolarSystem from './components/SolarSystem';
 import DetailPanel from './components/DetailPanel';
 import Ui5DetailPanel from './components/Ui5DetailPanel';
 import { HelpCircle, Sun, Moon, Radio } from 'lucide-react';
-import { ThemeProvider } from '@ui5/webcomponents-react';
+import { 
+  ThemeProvider,
+  ShellBar,
+  Button,
+  FlexBox,
+  ToggleButton
+} from '@ui5/webcomponents-react';
 import { setTheme as setUi5Theme } from '@ui5/webcomponents-base/dist/config/Theme.js';
 
 function App() {
@@ -48,134 +54,218 @@ function App() {
 
   return (
     <ThemeProvider>
-      <div className={`relative flex flex-col lg:flex-row h-screen w-screen overflow-hidden antialiased font-sans select-none transition-colors duration-300 ${
-        isLightTheme ? 'bg-stone-50 text-stone-900' : 'bg-slate-950 text-slate-100'
-      }`}>
+      <div 
+        className={`relative flex flex-col lg:flex-row h-screen w-screen overflow-hidden antialiased font-sans select-none transition-colors duration-300 ${
+          isLightTheme ? 'bg-stone-50 text-stone-900' : 'bg-slate-950 text-slate-100'
+        }`}
+        style={useUi5View ? {
+          backgroundColor: 'var(--sapBackgroundColor, #fafafa)',
+          color: 'var(--sapTextColor, #1f2937)'
+        } : undefined}
+      >
         {/* Background Starfield */}
-        <StarField />
+        {(!useUi5View || theme === 'dark') && <StarField />}
 
         {/* Main Solar System Viewer */}
-        <main className={`flex-1 relative flex flex-col h-[50vh] lg:h-full overflow-hidden border-b lg:border-b-0 ${
-          isLightTheme ? 'border-stone-200' : 'border-slate-800'
-        }`}>
+        <main className="flex-1 relative flex flex-col h-[50vh] lg:h-full overflow-hidden">
           
-          {/* Floating App Header */}
-          <header className="absolute top-4 left-6 z-10 pointer-events-none max-w-sm lg:max-w-md">
-            <h1 className={`text-xl lg:text-2xl font-extrabold tracking-wider uppercase flex items-center gap-1.5 ${
-              isLightTheme 
-                ? 'text-indigo-950 bg-clip-text' 
-                : 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-indigo-400 to-purple-400'
-            }`}>
-              Kosmos Explorer {useUi5View && <span className="text-[10px] font-bold align-middle bg-blue-600 text-white px-2 py-0.5 rounded">UI5</span>}
-            </h1>
-            <p className={`text-[10px] lg:text-xs mt-0.5 font-semibold ${isLightTheme ? 'text-stone-500' : 'text-slate-400'}`}>
-              {useUi5View ? "SAP Fiori / UI5 Web Components Showcase" : "Interaktiver Wegweiser & Orbit-Simulator"}
-            </p>
-            <div className={`mt-2 text-[9px] lg:text-[10px] font-semibold px-2 py-0.5 rounded-md inline-block ${
-              isLightTheme 
-                ? 'bg-stone-200/50 border border-stone-300/40 text-stone-600' 
-                : 'bg-slate-900/40 border border-slate-800/30 text-slate-500'
-            }`}>
-              Konstellation berechnet für: {formattedDate}
-            </div>
-          </header>
-
-          {/* Floating Toolbar (Top Right) */}
-          <div className="absolute top-4 right-6 z-20 flex items-center gap-2 pointer-events-auto">
-            {/* Toggle Button for SAP UI5 Showcase */}
-            <button
-              onClick={() => setUseUi5View(prev => !prev)}
-              className={`px-3 py-1.5 rounded-xl border text-[10px] font-bold tracking-wide transition-all shadow-md backdrop-blur-sm cursor-pointer ${
-                useUi5View 
-                  ? 'bg-blue-600 border-blue-500 text-white hover:bg-blue-700' 
-                  : (isLightTheme 
-                    ? 'bg-white/80 border-stone-200 text-stone-700 hover:bg-white hover:text-stone-900 hover:shadow-md' 
-                    : 'bg-slate-900/60 border-slate-800/60 text-slate-300 hover:bg-slate-900 hover:text-white')
-              }`}
-              title={useUi5View ? "Zurück zur Custom-Ansicht" : "Zu SAP UI5 (Fiori) Ansicht wechseln"}
+          {useUi5View ? (
+            /* SAP UI5 ShellBar Header */
+            <ShellBar
+              primaryTitle="Kosmos Explorer"
+              secondaryTitle="SAP Fiori Showcase"
+              style={{
+                borderBottom: '1px solid var(--sapGroup_BorderColor, #e5e5e5)',
+                zIndex: 20
+              }}
             >
-              {useUi5View ? "Showcase: SAP UI5" : "Showcase: Custom"}
-            </button>
-
-            {/* Instructions Overlay */}
-            <div className={`hidden md:flex items-center gap-1.5 text-[10px] px-3 py-1.5 rounded-xl border backdrop-blur-sm pointer-events-none ${
-              isLightTheme 
-                ? 'text-stone-500 bg-white/70 border-stone-200/60' 
-                : 'text-slate-400 bg-slate-950/40 border-slate-900/40'
-            }`}>
-              <HelpCircle className={`w-3.5 h-3.5 ${isLightTheme ? 'text-indigo-600' : 'text-indigo-400/80'}`} />
-              <span>Maus über Planet stoppt Animation. Click zur Auswahl.</span>
-            </div>
-            
-            {/* Light/Dark Mode Switch Button */}
-            <button
-              onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-              className={`p-2 rounded-xl border transition-all shadow-md backdrop-blur-sm cursor-pointer ${
+              <Button 
+                design="Transparent"
+                onClick={() => setUseUi5View(false)}
+                style={{ marginRight: '8px' }}
+              >
+                Standard-Design
+              </Button>
+              <Button 
+                design="Transparent"
+                onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+              >
+                {isLightTheme ? "Dunkelmodus" : "Lichtmodus"}
+              </Button>
+            </ShellBar>
+          ) : (
+            /* Custom Tailwind Header */
+            <header className="absolute top-4 left-6 z-10 pointer-events-none max-w-sm lg:max-w-md">
+              <h1 className={`text-xl lg:text-2xl font-extrabold tracking-wider uppercase flex items-center gap-1.5 ${
                 isLightTheme 
-                  ? 'bg-white/80 border-stone-200 text-stone-700 hover:bg-white hover:text-stone-900 hover:shadow-md' 
-                  : 'bg-slate-900/60 border-slate-800/60 text-slate-300 hover:bg-slate-900 hover:text-white'
-              }`}
-              title={isLightTheme ? 'Dunkelmodus aktivieren' : 'Lichtmodus (Starmap) aktivieren'}
-            >
-              {isLightTheme ? <Moon className="w-4 h-4 text-indigo-700" /> : <Sun className="w-4 h-4 text-amber-400" />}
-            </button>
-          </div>
+                  ? 'text-indigo-950 bg-clip-text' 
+                  : 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-indigo-400 to-purple-400'
+              }`}>
+                Kosmos Explorer {useUi5View && <span className="text-[10px] font-bold align-middle bg-blue-600 text-white px-2 py-0.5 rounded">UI5</span>}
+              </h1>
+              <p className={`text-[10px] lg:text-xs mt-0.5 font-semibold ${isLightTheme ? 'text-stone-500' : 'text-slate-400'}`}>
+                Interaktiver Wegweiser & Orbit-Simulator
+              </p>
+              <div className={`mt-2 text-[9px] lg:text-[10px] font-semibold px-2 py-0.5 rounded-md inline-block ${
+                isLightTheme 
+                  ? 'bg-stone-200/50 border border-stone-300/40 text-stone-600' 
+                  : 'bg-slate-900/40 border border-slate-800/30 text-slate-500'
+              }`}>
+                Konstellation berechnet für: {formattedDate}
+              </div>
+            </header>
+          )}
 
-          {/* Quick Selector Navigation Pills & Probes Toggle */}
-          <nav className={`absolute bottom-4 left-6 right-6 lg:right-auto z-10 flex gap-1.5 lg:gap-2 overflow-x-auto py-2 px-2.5 backdrop-blur-md rounded-2xl border pointer-events-auto shadow-lg max-w-[calc(100vw-3rem)] scrollbar-none ${
-            isLightTheme ? 'bg-white/85 border-stone-200/70' : 'bg-slate-950/60 border-slate-900'
-          }`}>
-            <button 
-              onClick={() => handleSelectPlanet(null)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 shrink-0 cursor-pointer ${
-                !selectedPlanet 
-                  ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.35)]' 
-                  : (isLightTheme
-                    ? 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
-              }`}
+          {/* Floating Toolbar for Custom View (Only shown when not in UI5 mode) */}
+          {!useUi5View && (
+            <div className="absolute top-4 right-6 z-20 flex items-center gap-2 pointer-events-auto">
+              {/* Toggle Button for SAP UI5 Showcase */}
+              <button
+                onClick={() => setUseUi5View(prev => !prev)}
+                className={`px-3 py-1.5 rounded-xl border text-[10px] font-bold tracking-wide transition-all shadow-md backdrop-blur-sm cursor-pointer ${
+                  useUi5View 
+                    ? 'bg-blue-600 border-blue-500 text-white hover:bg-blue-700' 
+                    : (isLightTheme 
+                      ? 'bg-white/80 border-stone-200 text-stone-700 hover:bg-white hover:text-stone-900 hover:shadow-md' 
+                      : 'bg-slate-900/60 border-slate-800/60 text-slate-300 hover:bg-slate-900 hover:text-white')
+                }`}
+                title={useUi5View ? "Zurück zur Custom-Ansicht" : "Zu SAP UI5 (Fiori) Ansicht wechseln"}
+              >
+                Showcase: SAP UI5
+              </button>
+
+              {/* Instructions Overlay */}
+              <div className={`hidden md:flex items-center gap-1.5 text-[10px] px-3 py-1.5 rounded-xl border backdrop-blur-sm pointer-events-none ${
+                isLightTheme 
+                  ? 'text-stone-500 bg-white/70 border-stone-200/60' 
+                  : 'text-slate-400 bg-slate-950/40 border-slate-900/40'
+              }`}>
+                <HelpCircle className={`w-3.5 h-3.5 ${isLightTheme ? 'text-indigo-600' : 'text-indigo-400/80'}`} />
+                <span>Maus über Planet stoppt Animation. Click zur Auswahl.</span>
+              </div>
+              
+              {/* Light/Dark Mode Switch Button */}
+              <button
+                onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+                className={`p-2 rounded-xl border transition-all shadow-md backdrop-blur-sm cursor-pointer ${
+                  isLightTheme 
+                    ? 'bg-white/80 border-stone-200 text-stone-700 hover:bg-white hover:text-stone-900 hover:shadow-md' 
+                    : 'bg-slate-900/60 border-slate-800/60 text-slate-300 hover:bg-slate-900 hover:text-white'
+                }`}
+                title={isLightTheme ? 'Dunkelmodus aktivieren' : 'Lichtmodus (Starmap) aktivieren'}
+              >
+                {isLightTheme ? <Moon className="w-4 h-4 text-indigo-700" /> : <Sun className="w-4 h-4 text-amber-400" />}
+              </button>
+            </div>
+          )}
+
+          {/* Quick Selector Navigation Navigation & Probes Toggle */}
+          {useUi5View ? (
+            /* SAP UI5 Navigation Bar (Floating Bottom-Left style or Toolbar) */
+            <FlexBox 
+              justifyContent="Center" 
+              alignItems="Center" 
+              style={{
+                position: 'absolute',
+                bottom: '16px',
+                left: '24px',
+                right: '24px',
+                padding: '0.5rem 1rem',
+                backgroundColor: 'var(--sapObjectHeader_Background, #ffffff)',
+                border: '1px solid var(--sapGroup_BorderColor, #e5e5e5)',
+                borderRadius: '12px',
+                boxShadow: 'var(--sapContent_HeaderShadow, 0 4px 10px rgba(0,0,0,0.15))',
+                zIndex: 10,
+                gap: '1rem',
+                width: 'auto',
+                maxWidth: 'calc(100vw - 3rem)',
+                overflowX: 'auto'
+              }}
+              className="scrollbar-none"
             >
-              Sonne
-            </button>
-            
-            {planetsData.map(planet => {
-              const isSelected = selectedPlanet?.id === planet.id;
-              return (
-                <button
-                  key={planet.id}
-                  onClick={() => handleSelectPlanet(planet)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 shrink-0 cursor-pointer ${
-                    isSelected 
-                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-[0_0_12px_rgba(99,102,241,0.4)]' 
-                      : (isLightTheme
-                        ? 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
-                  }`}
+              <FlexBox style={{ gap: '0.25rem', overflowX: 'auto', maxWidth: '100%' }} className="scrollbar-none">
+                <Button 
+                  design={!selectedPlanet ? "Emphasized" : "Default"}
+                  onClick={() => handleSelectPlanet(null)}
                 >
-                  {planet.name}
-                </button>
-              );
-            })}
+                  Sonne
+                </Button>
+                {planetsData.map(planet => (
+                  <Button
+                    key={planet.id}
+                    design={selectedPlanet?.id === planet.id ? "Emphasized" : "Default"}
+                    onClick={() => handleSelectPlanet(planet)}
+                  >
+                    {planet.name}
+                  </Button>
+                ))}
+              </FlexBox>
 
-            {/* Divider */}
-            <div className={`w-[1px] my-1 shrink-0 ${isLightTheme ? 'bg-stone-200' : 'bg-slate-800'}`} />
+              <ToggleButton
+                pressed={showProbes}
+                onChange={() => setShowProbes(p => !p)}
+                design="Default"
+              >
+                Sonden {showProbes ? "an" : "aus"}
+              </ToggleButton>
+            </FlexBox>
+          ) : (
+            /* Custom Navigation Bar */
+            <nav className={`absolute bottom-4 left-6 right-6 lg:right-auto z-10 flex gap-1.5 lg:gap-2 overflow-x-auto py-2 px-2.5 backdrop-blur-md rounded-2xl border pointer-events-auto shadow-lg max-w-[calc(100vw-3rem)] scrollbar-none ${
+              isLightTheme ? 'bg-white/85 border-stone-200/70' : 'bg-slate-950/60 border-slate-900'
+            }`}>
+              <button 
+                onClick={() => handleSelectPlanet(null)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 shrink-0 cursor-pointer ${
+                  !selectedPlanet 
+                    ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.35)]' 
+                    : (isLightTheme
+                      ? 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
+                }`}
+              >
+                Sonne
+              </button>
+              
+              {planetsData.map(planet => {
+                const isSelected = selectedPlanet?.id === planet.id;
+                return (
+                  <button
+                    key={planet.id}
+                    onClick={() => handleSelectPlanet(planet)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 shrink-0 cursor-pointer ${
+                      isSelected 
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-[0_0_12px_rgba(99,102,241,0.4)]' 
+                        : (isLightTheme
+                          ? 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
+                    }`}
+                  >
+                    {planet.name}
+                  </button>
+                );
+              })}
 
-            {/* Probes Toggle Button */}
-            <button
-              onClick={() => setShowProbes(prev => !prev)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 shrink-0 cursor-pointer flex items-center gap-1.5 ${
-                showProbes
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-[0_0_12px_rgba(16,185,129,0.45)]'
-                  : (isLightTheme
-                    ? 'text-stone-500 hover:text-stone-700 hover:bg-stone-100'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
-              }`}
-              title="Historische Raumsonden (Voyager, Cassini, etc.) einblenden"
-            >
-              <Radio className={`w-3.5 h-3.5 ${showProbes ? 'animate-pulse' : ''}`} />
-              Sonden {showProbes ? 'an' : 'aus'}
-            </button>
-          </nav>
+              {/* Divider */}
+              <div className={`w-[1px] my-1 shrink-0 ${isLightTheme ? 'bg-stone-200' : 'bg-slate-800'}`} />
+
+              {/* Probes Toggle Button */}
+              <button
+                onClick={() => setShowProbes(prev => !prev)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                  showProbes
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-[0_0_12px_rgba(16,185,129,0.45)]'
+                    : (isLightTheme
+                      ? 'text-stone-500 hover:text-stone-700 hover:bg-stone-100'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
+                }`}
+                title="Historische Raumsonden (Voyager, Cassini, etc.) einblenden"
+              >
+                <Radio className={`w-3.5 h-3.5 ${showProbes ? 'animate-pulse' : ''}`} />
+                Sonden {showProbes ? 'an' : 'aus'}
+              </button>
+            </nav>
+          )}
 
           {/* Interactive SVG Canvas */}
           <SolarSystem
