@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tabs": "^1.1.13",
     "@tailwindcss/vite": "^4.3.0",
     "@ui5/webcomponents": "^2.22.0",
     "@ui5/webcomponents-fiori": "^2.22.0",

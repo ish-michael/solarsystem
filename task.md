@@ -32,3 +32,11 @@
   - [x] Refactor `src/components/StarField.tsx` to generate star coordinates outside the component, satisfying React 19 rendering purity rules
   - [x] Fix TypeScript compiler warnings for unused parameter `_planetId` in `SolarSystem.tsx`
   - [x] Run linter `npm run lint` and build `npm run build` to ensure 100% clean check status
+- [x] Refactorings & Usability Fixes (Phase 2.3)
+  - [x] Outsource inline SVGs (`ReturnOrbitIcon`, `OrbitVortexIcon`) from `src/components/DetailPanel.tsx` to a new `src/components/OrbitIcons.tsx` module
+  - [x] Replace the Fiori subheader layout buttons with a native `SegmentedButton` and `SegmentedButtonItem` to resolve scaling and visibility issues
+  - [x] Set `flexShrink: 0` on the `SegmentedButton` to ensure texts are never truncated on small screens
+  - [x] Resolve UI5 moon list scrolling issues by removing the nested maxHeight scroll wrapper, allowing it to scroll with the main aside panel
+  - [x] Integrate dynamic Wikipedia links under descriptions in both Custom and UI5 Detail panels
+  - [x] Validate zero errors/warnings in TypeScript compile and EsLint checks
+

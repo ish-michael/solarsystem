@@ -141,5 +141,88 @@ body.light-theme .glow-planet {
   filter: drop-shadow(0 0 10px var(--glow-color));
 }
 
+/* --- KOSMOS EXPLORER CUSTOM COMPONENT STYLES --- */
+.fact-card {
+  @apply border rounded-xl p-3 flex flex-col justify-between transition-all duration-200;
+  @apply bg-slate-900/50 border-slate-800/80;
+}
+body.light-theme .fact-card {
+  @apply bg-stone-200/30 border-stone-300/40;
+}
+
+.fact-card-label {
+  @apply flex items-center gap-1.5 text-xs mb-1 font-semibold text-slate-400;
+}
+body.light-theme .fact-card-label {
+  @apply text-stone-500;
+}
+
+.fact-card-value {
+  @apply text-sm font-bold text-white;
+}
+body.light-theme .fact-card-value {
+  @apply text-stone-900;
+}
+
+.info-card {
+  @apply p-4 border rounded-xl transition-all duration-200 bg-slate-900/50 border-slate-800/80;
+}
+body.light-theme .info-card {
+  @apply bg-stone-200/30 border-stone-300/40;
+}
+
+.info-card-title {
+  @apply text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1.5 flex items-center gap-1.5;
+}
+
+.info-card-desc {
+  @apply text-xs leading-relaxed text-slate-300;
+}
+body.light-theme .info-card-desc {
+  @apply text-stone-700;
+}
+
+.moon-item {
+  @apply p-3 transition-colors duration-150 flex items-center justify-between border-b last:border-b-0 hover:bg-slate-900/40 border-slate-800/40;
+}
+body.light-theme .moon-item {
+  @apply hover:bg-stone-200/40 border-stone-200/40;
+}
+
+.moon-index-badge {
+  @apply w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold bg-slate-800 border-slate-700 text-slate-400;
+}
+body.light-theme .moon-index-badge {
+  @apply bg-stone-200/60 border-stone-300/40 text-stone-600;
+}
+
+.moon-name {
+  @apply text-xs lg:text-sm font-bold leading-tight text-white;
+}
+body.light-theme .moon-name {
+  @apply text-stone-900;
+}
+
+.moon-desc {
+  @apply text-[10px] truncate max-w-[180px] text-slate-500;
+}
+body.light-theme .moon-desc {
+  @apply text-stone-500;
+}
+
+.moon-radius-val {
+  @apply text-xs font-bold text-indigo-300;
+}
+body.light-theme .moon-radius-val {
+  @apply text-indigo-700;
+}
+
+.moon-radius-label {
+  @apply text-[9px] uppercase tracking-widest text-slate-400;
+}
+body.light-theme .moon-radius-label {
+  @apply text-stone-500;
+}
+
 
 

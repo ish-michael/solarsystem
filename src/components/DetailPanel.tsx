@@ -1,5 +1,21 @@
 import type { Planet, SunData } from '../types';
-import { Sparkles, Thermometer, Globe, Compass, Clock, Milestone, Wind, Layers } from 'lucide-react';
+import { Sparkles, Thermometer, Globe, Compass, Clock, Milestone, Wind, Layers, ExternalLink } from 'lucide-react';
+import { ReturnOrbitIcon, OrbitVortexIcon } from './OrbitIcons';
+
+function getWikipediaUrl(name: string): string {
+  const mapping: { [key: string]: string } = {
+    "Sonne": "https://de.wikipedia.org/wiki/Sonne",
+    "Merkur": "https://de.wikipedia.org/wiki/Merkur_(Planet)",
+    "Venus": "https://de.wikipedia.org/wiki/Venus_(Planet)",
+    "Erde": "https://de.wikipedia.org/wiki/Erde",
+    "Mars": "https://de.wikipedia.org/wiki/Mars_(Planet)",
+    "Jupiter": "https://de.wikipedia.org/wiki/Jupiter_(Planet)",
+    "Saturn": "https://de.wikipedia.org/wiki/Saturn_(Planet)",
+    "Uranus": "https://de.wikipedia.org/wiki/Uranus_(Planet)",
+    "Neptun": "https://de.wikipedia.org/wiki/Neptun_(Planet)"
+  };
+  return mapping[name] || `https://de.wikipedia.org/wiki/${name}`;
+}
 
 interface DetailPanelProps {
   selectedPlanet: Planet | null;
@@ -7,6 +23,81 @@ interface DetailPanelProps {
   isMoonFocused: boolean;
   isLightTheme: boolean;
   onToggleMoonFocus: () => void;
+}
+
+// --- SUB-COMPONENTS ---
+interface FactCardProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+  colSpan?: string;
+}
+
+function FactCard({ icon, label, value, colSpan = '' }: FactCardProps) {
+  return (
+    <div className={`fact-card ${colSpan}`}>
+      <div className="fact-card-label">
+        {icon}
+        {label}
+      </div>
+      <span className="fact-card-value">{value}</span>
+    </div>
+  );
+}
+
+interface InfoCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+function InfoCard({ icon, title, description }: InfoCardProps) {
+  return (
+    <div className="info-card">
+      <h4 className="info-card-title">
+        {icon} {title}
+      </h4>
+      <p className="info-card-desc">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+interface MoonItemProps {
+  name: string;
+  discoverer?: string;
+  discoveryYear?: string | number;
+  radiusKm: number;
+  index: number;
+}
+
+function MoonItem({ name, discoverer, discoveryYear, radiusKm, index }: MoonItemProps) {
+  return (
+    <div className="moon-item">
+      <div className="flex items-center gap-2.5">
+        <div className="moon-index-badge">
+          {index + 1}
+        </div>
+        <div>
+          <p className="moon-name">
+            {name}
+          </p>
+          {discoverer && (
+            <p className="moon-desc">
+              {discoverer} ({discoveryYear || 'unbekannt'})
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="text-right">
+        <p className="moon-radius-val">
+          {radiusKm.toLocaleString('de-DE')} km
+        </p>
+        <p className="moon-radius-label">Radius</p>
+      </div>
+    </div>
+  );
 }
 
 export default function DetailPanel({
@@ -23,7 +114,6 @@ export default function DetailPanel({
   const temp = selectedPlanet ? selectedPlanet.tempC : sunData.tempC;
   const diameter = selectedPlanet ? selectedPlanet.diameterKm : sunData.diameterKm;
   const imagePath = selectedPlanet ? selectedPlanet.imagePath : sunData.imagePath;
-
 
   const atmosphere = selectedPlanet ? selectedPlanet.atmosphere : sunData.atmosphere;
   const surface = selectedPlanet ? selectedPlanet.surface : sunData.surface;
@@ -48,9 +138,7 @@ export default function DetailPanel({
   const textTitleColor = isLightTheme ? 'text-stone-900' : 'text-white';
   const textDescColor = isLightTheme ? 'text-stone-700' : 'text-slate-300';
   const textLabelColor = isLightTheme ? 'text-stone-500' : 'text-slate-400';
-  const cardBgClass = isLightTheme ? 'bg-stone-200/30 border-stone-300/40' : 'bg-slate-900/50 border-slate-800/80';
   const moonListBgClass = isLightTheme ? 'bg-stone-200/20 border-stone-200' : 'bg-slate-900/20 border-slate-800/60';
-  const moonItemClass = isLightTheme ? 'hover:bg-stone-200/40 border-stone-200/40' : 'hover:bg-slate-900/40 border-slate-800/40';
 
   return (
     <aside className={`w-full lg:w-[460px] flex-1 min-h-0 lg:flex-none p-6 flex flex-col overflow-y-auto shadow-2xl z-10 transition-all duration-300 ${containerClass}`}>
@@ -84,38 +172,9 @@ export default function DetailPanel({
             }`} />
             
             {isMoonFocused ? (
-              /* Back Button: Stylized Cosmic Returning Orbit Arrow */
-              <svg 
-                className="w-7 h-7 relative z-10 transform group-hover:-translate-x-0.5 transition-transform duration-300" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              >
-                <path d="M21 12A9 9 0 0 1 7.5 20" strokeDasharray="3 3" className={isLightTheme ? 'stroke-indigo-300' : 'stroke-indigo-500/50'} />
-                <path d="M12 3a9 9 0 0 1 9 9" strokeDasharray="3 3" className={isLightTheme ? 'stroke-indigo-300' : 'stroke-indigo-500/50'} />
-                <path d="M3 12a9 9 0 0 1 15-6.7L12 11" className={isLightTheme ? 'stroke-indigo-600' : 'stroke-indigo-400'} />
-                <polyline points="8 11 12 11 12 7" className={isLightTheme ? 'stroke-indigo-600' : 'stroke-indigo-400'} />
-                <circle cx="12" cy="12" r="1.5" className={isLightTheme ? 'fill-amber-500' : 'fill-amber-400'} />
-              </svg>
+              <ReturnOrbitIcon isLightTheme={isLightTheme} />
             ) : (
-              /* Focus Button: Stylized Gravity Orbit Vortex (Quantum-like) */
-              <svg 
-                className="w-7 h-7 relative z-10 animate-[spin_10s_linear_infinite] group-hover:animate-[spin_4s_linear_infinite]" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="3.5" className={isLightTheme ? 'fill-indigo-500 stroke-indigo-500' : 'fill-indigo-400 stroke-indigo-400'} />
-                <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="1" strokeDasharray="2 3" className="opacity-80" />
-                <circle cx="17.2" cy="9" r="1.2" className={isLightTheme ? 'fill-purple-500' : 'fill-purple-300'} />
-                <path d="M12 2a10 10 0 0 1 7.8 3.8" strokeWidth="1.5" className={isLightTheme ? 'stroke-indigo-600' : 'stroke-indigo-300'} />
-                <path d="M12 22a10 10 0 0 1-7.8-3.8" strokeWidth="1.5" className={isLightTheme ? 'stroke-indigo-600' : 'stroke-indigo-300'} />
-                <circle cx="5" cy="15" r="1" className={isLightTheme ? 'fill-stone-600' : 'fill-slate-200'} />
-              </svg>
+              <OrbitVortexIcon isLightTheme={isLightTheme} />
             )}
           </button>
         )}
@@ -142,111 +201,92 @@ export default function DetailPanel({
 
       {/* Description */}
       <div className="mb-5">
-        <p className={`${textDescColor} leading-relaxed text-sm lg:text-base`}>
+        <p className={`${textDescColor} leading-relaxed text-sm lg:text-base mb-3.5`}>
           {description}
         </p>
+        <a 
+          href={getWikipediaUrl(title)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-flex items-center gap-1.5 text-xs font-semibold hover:underline ${
+            isLightTheme 
+              ? 'text-indigo-600 hover:text-indigo-800' 
+              : 'text-indigo-400 hover:text-indigo-300'
+          }`}
+        >
+          <span>Mehr auf Wikipedia lesen</span>
+          <ExternalLink className="w-3 h-3" />
+        </a>
       </div>
 
       {/* Quick Facts Grid */}
       <div className="grid grid-cols-2 gap-3 mb-5">
-        <div className={`border rounded-xl p-3 flex flex-col justify-between ${cardBgClass}`}>
-          <div className={`flex items-center gap-1.5 text-xs mb-1 font-semibold ${textLabelColor}`}>
-            <Thermometer className="w-3.5 h-3.5 text-red-400" />
-            Temperatur
-          </div>
-          <span className={`text-sm font-bold ${textTitleColor}`}>{temp}</span>
-        </div>
+        <FactCard
+          icon={<Thermometer className="w-3.5 h-3.5 text-red-400" />}
+          label="Temperatur"
+          value={temp}
+        />
 
-        <div className={`border rounded-xl p-3 flex flex-col justify-between ${cardBgClass}`}>
-          <div className={`flex items-center gap-1.5 text-xs mb-1 font-semibold ${textLabelColor}`}>
-            <Globe className="w-3.5 h-3.5 text-blue-400" />
-            Durchmesser
-          </div>
-          <span className={`text-sm font-bold ${textTitleColor}`}>
-            {diameter.toLocaleString('de-DE')} km
-          </span>
-        </div>
+        <FactCard
+          icon={<Globe className="w-3.5 h-3.5 text-blue-400" />}
+          label="Durchmesser"
+          value={`${diameter.toLocaleString('de-DE')} km`}
+        />
 
         {selectedPlanet ? (
           <>
-            <div className={`border rounded-xl p-3 flex flex-col justify-between ${cardBgClass}`}>
-              <div className={`flex items-center gap-1.5 text-xs mb-1 font-semibold ${textLabelColor}`}>
-                <Milestone className="w-3.5 h-3.5 text-emerald-400" />
-                Sonnenabstand
-              </div>
-              <span className={`text-sm font-bold ${textTitleColor}`}>
-                {selectedPlanet.distanceFromSunAU} AE
-              </span>
-            </div>
+            <FactCard
+              icon={<Milestone className="w-3.5 h-3.5 text-emerald-400" />}
+              label="Sonnenabstand"
+              value={`${selectedPlanet.distanceFromSunAU} AE`}
+            />
 
-            <div className={`border rounded-xl p-3 flex flex-col justify-between ${cardBgClass}`}>
-              <div className={`flex items-center gap-1.5 text-xs mb-1 font-semibold ${textLabelColor}`}>
-                <Compass className="w-3.5 h-3.5 text-amber-400" />
-                Umlaufzeit
-              </div>
-              <span className={`text-sm font-bold ${textTitleColor}`}>
-                {selectedPlanet.orbitalPeriodDays >= 365
-                  ? `${(selectedPlanet.orbitalPeriodDays / 365).toFixed(1)} Jahre`
-                  : `${selectedPlanet.orbitalPeriodDays} Tage`}
-              </span>
-            </div>
+            <FactCard
+              icon={<Compass className="w-3.5 h-3.5 text-amber-400" />}
+              label="Umlaufzeit"
+              value={selectedPlanet.orbitalPeriodDays >= 365
+                ? `${(selectedPlanet.orbitalPeriodDays / 365).toFixed(1)} Jahre`
+                : `${selectedPlanet.orbitalPeriodDays} Tage`}
+            />
 
-            <div className={`border rounded-xl p-3 col-span-2 flex items-center justify-between ${cardBgClass}`}>
-              <div className={`flex items-center gap-1.5 text-xs font-semibold ${textLabelColor}`}>
-                <Clock className="w-3.5 h-3.5 text-purple-400" />
-                Tageslänge
-              </div>
-              <span className={`text-sm font-bold ${textTitleColor}`}>
-                {selectedPlanet.dayLengthHours >= 24
-                  ? `${(selectedPlanet.dayLengthHours / 24).toFixed(1)} Erdentage`
-                  : `${selectedPlanet.dayLengthHours} Std.`}
-              </span>
-            </div>
+            <FactCard
+              icon={<Clock className="w-3.5 h-3.5 text-purple-400" />}
+              label="Tageslänge"
+              value={selectedPlanet.dayLengthHours >= 24
+                ? `${(selectedPlanet.dayLengthHours / 24).toFixed(1)} Erdentage`
+                : `${selectedPlanet.dayLengthHours} Std.`}
+              colSpan="col-span-2"
+            />
           </>
         ) : (
-          <>
-            <div className={`border rounded-xl p-3 col-span-2 flex flex-col justify-between ${cardBgClass}`}>
-              <div className={`flex items-center gap-1.5 text-xs mb-1 font-semibold ${textLabelColor}`}>
-                <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
-                Masse
-              </div>
-              <span className={`text-sm font-bold ${textTitleColor}`}>{(sunData as SunData).mass}</span>
-            </div>
-          </>
+          <FactCard
+            icon={<Sparkles className="w-3.5 h-3.5 text-yellow-400" />}
+            label="Masse"
+            value={sunData.mass}
+            colSpan="col-span-2"
+          />
         )}
       </div>
 
       {/* Detailed Planet Data Cards (Atmosphere, Surface, History) */}
       <div className="flex flex-col gap-3 mb-5">
-        {/* Atmosphere */}
-        <div className={`p-4 border rounded-xl ${cardBgClass}`}>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1.5 flex items-center gap-1.5">
-            <Wind className="w-4 h-4 text-indigo-400" /> Atmosphäre
-          </h4>
-          <p className={`text-xs leading-relaxed ${textDescColor}`}>
-            {atmosphere}
-          </p>
-        </div>
+        <InfoCard
+          icon={<Wind className="w-4 h-4 text-indigo-400" />}
+          title="Atmosphäre"
+          description={atmosphere}
+        />
 
-        {/* Surface / Geology */}
-        <div className={`p-4 border rounded-xl ${cardBgClass}`}>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1.5 flex items-center gap-1.5">
-            <Layers className="w-4 h-4 text-indigo-400" /> Oberfläche & Geologie
-          </h4>
-          <p className={`text-xs leading-relaxed ${textDescColor}`}>
-            {surface}
-          </p>
-        </div>
+        <InfoCard
+          icon={<Layers className="w-4 h-4 text-indigo-400" />}
+          title="Oberfläche & Geologie"
+          description={surface}
+        />
 
-        {/* Discovery History */}
-        <div className={`p-4 border rounded-xl ${cardBgClass}`}>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1.5 flex items-center gap-1.5">
-            <Compass className="w-4 h-4 text-indigo-400" /> Entdeckung & Geschichte
-          </h4>
-          <p className={`text-xs leading-relaxed ${textDescColor}`}>
-            {discoveryText}
-          </p>
-        </div>
+        <InfoCard
+          icon={<Compass className="w-4 h-4 text-indigo-400" />}
+          title="Entdeckung & Geschichte"
+          description={discoveryText}
+        />
       </div>
 
       {/* Fun Fact Section */}
@@ -286,36 +326,14 @@ export default function DetailPanel({
             <div className={`flex-1 border rounded-xl overflow-hidden flex flex-col ${moonListBgClass}`}>
               <div className={`overflow-y-auto max-h-[260px] divide-y ${isLightTheme ? 'divide-stone-200/60' : 'divide-slate-800/40'}`}>
                 {moons.map((moon, index) => (
-                  <div
+                  <MoonItem
                     key={moon.name}
-                    className={`p-3 transition-colors duration-150 flex items-center justify-between border-b last:border-b-0 ${moonItemClass}`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold ${
-                        isLightTheme 
-                          ? 'bg-stone-200/60 border-stone-300/40 text-stone-600' 
-                          : 'bg-slate-800 border-slate-700 text-slate-400'
-                      }`}>
-                        {index + 1}
-                      </div>
-                      <div>
-                        <p className={`text-xs lg:text-sm font-bold leading-tight ${textTitleColor}`}>
-                          {moon.name}
-                        </p>
-                        {moon.discoverer && (
-                          <p className={`text-[10px] truncate max-w-[180px] ${isLightTheme ? 'text-stone-500' : 'text-slate-500'}`}>
-                            {moon.discoverer} ({moon.discoveryYear || 'unbekannt'})
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className={`text-xs font-bold ${isLightTheme ? 'text-indigo-700' : 'text-indigo-300'}`}>
-                        {moon.radiusKm.toLocaleString('de-DE')} km
-                      </p>
-                      <p className={`text-[9px] uppercase tracking-widest ${textLabelColor}`}>Radius</p>
-                    </div>
-                  </div>
+                    name={moon.name}
+                    discoverer={moon.discoverer}
+                    discoveryYear={moon.discoveryYear}
+                    radiusKm={moon.radiusKm}
+                    index={index}
+                  />
                 ))}
               </div>
             </div>

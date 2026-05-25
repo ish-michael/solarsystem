@@ -65,7 +65,32 @@ Die Datenstruktur wurde in [types.ts](file:///Users/michael/Documents/AntiTest/s
 
 ---
 
+## 🛠️ Phase 2.3 - Refactorings & UI5 Usability-Fixes
+
+### 1. SVG-Icons Ausgliederung (Eleganter & Modular)
+- **Problem**: Die detailreichen, animierten Inline-SVGs (`ReturnOrbitIcon` und `OrbitVortexIcon`) belegten knapp 40 Zeilen in [DetailPanel.tsx](file:///Users/michael/Documents/AntiTest/src/components/DetailPanel.tsx) und lenkten von der UI-Komposition ab.
+- **Lösung**: Die Icons wurden in die neue Datei [OrbitIcons.tsx](file:///Users/michael/Documents/AntiTest/src/components/OrbitIcons.tsx) ausgelagert. [DetailPanel.tsx](file:///Users/michael/Documents/AntiTest/src/components/DetailPanel.tsx) importiert diese nun sauber, wodurch der Code kompakter, modularer und besser lesbar wird.
+
+### 2. UI5 Menü-Umschalter (SegmentedButton Integration)
+- **Problem**: In der UI5-Ansicht waren die Ansichts-Umschalter im SubHeader als normale Buttons realisiert. Bei verkleinerten Viewports oder geöffneter Sidebar wurden die Texte zusammengestaucht oder abgeschnitten (zu klein, unlesbar).
+- **Lösung**: Umstellung auf das native Fiori-Horizon-Bedienelement `SegmentedButton` und `SegmentedButtonItem` mit einer `flexShrink: 0` CSS-Eigenschaft. Dies behebt jegliche Textkürzung, sorgt für eine klare Abgrenzung der Schaltflächen und passt sich perfekt an Fiori-Layouts an.
+- **TypeScript-Typisierung**: Die Typisierungen im `isUi5` Render-Zweig wurden durch explizites Casten (`(showcaseMode as string)`) gegenüber Type-Narrowing-Fehlern (TS2367) abgesichert.
+
+### 3. Behebung der UI5 Moon-Scrollbar blockierung
+- **Problem**: In der UI5-Monde-Card war ein verschachtelter Container mit `maxHeight: '260px', overflowY: 'auto'` definiert. Dies führte zu doppelten Scrollbalken und Scrollbar-Chaining-Konflikten, wodurch die Mondliste oft nicht scrollte.
+- **Lösung**: Der verschachtelte Scroll-Container wurde entfernt, sodass sich das `<List>`-Element natürlich ausdehnen kann. Die Monde scrollen nun nahtlos und flüssig über die Haupt-Scrollbar des rechten Detailpanels (`aside`), was jegliche Blockaden verhindert.
+
+### 4. Wikipedia-Verknüpfung
+- **Feature**: Hinzufügen eines direkten Links zur Wikipedia-Seite des ausgewählten Himmelskörpers.
+- **Implementierung**:
+  - Eine dynamische Hilfsfunktion `getWikipediaUrl` ermittelt anhand des Namens die korrekte Wikipedia-URL (inklusive Sondersuffixe wie `_(Planet)` für die deutsche Wikipedia).
+  - In [DetailPanel.tsx](file:///Users/michael/Documents/AntiTest/src/components/DetailPanel.tsx) wurde ein stilvoller Link mit dem `ExternalLink`-Symbol (aus Lucide) unter der Beschreibung eingefügt.
+  - In [Ui5DetailPanel.tsx](file:///Users/michael/Documents/AntiTest/src/components/Ui5DetailPanel.tsx) wurde das native UI5-`Link`-Element unter der Card-Beschreibung platziert.
+
+---
+
 ## 🛠️ Verifikations-Ergebnis
 - **Linter**: `npm run lint` schließt erfolgreich mit **0 Fehlern und 0 Warnungen** ab.
 - **Build-Ergebnis**: Erfolgreich abgeschlossen mit `npm run build` – **0 Fehler, 0 Warnungen**.
-- **Performance**: Skalierung, Umlaufbahnen, Proben und starmap-Gitter arbeiten reibungslos im Browser. GPU-Compositing sorgt für absolut flüssige Bildübergänge.
+- **Performance**: Scroll-Performance und Steuerung sind fehlerfrei und butterweich.
+

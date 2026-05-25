@@ -10,8 +10,24 @@ import {
   ObjectStatus,
   Icon,
   Button,
-  FlexBox
+  FlexBox,
+  Link
 } from '@ui5/webcomponents-react';
+
+function getWikipediaUrl(name: string): string {
+  const mapping: { [key: string]: string } = {
+    "Sonne": "https://de.wikipedia.org/wiki/Sonne",
+    "Merkur": "https://de.wikipedia.org/wiki/Merkur_(Planet)",
+    "Venus": "https://de.wikipedia.org/wiki/Venus_(Planet)",
+    "Erde": "https://de.wikipedia.org/wiki/Erde",
+    "Mars": "https://de.wikipedia.org/wiki/Mars_(Planet)",
+    "Jupiter": "https://de.wikipedia.org/wiki/Jupiter_(Planet)",
+    "Saturn": "https://de.wikipedia.org/wiki/Saturn_(Planet)",
+    "Uranus": "https://de.wikipedia.org/wiki/Uranus_(Planet)",
+    "Neptun": "https://de.wikipedia.org/wiki/Neptun_(Planet)"
+  };
+  return mapping[name] || `https://de.wikipedia.org/wiki/${name}`;
+}
 
 import "@ui5/webcomponents-icons/dist/temperature.js";
 import "@ui5/webcomponents-icons/dist/history.js";
@@ -25,6 +41,42 @@ interface Ui5DetailPanelProps {
   sunData: SunData;
   isMoonFocused: boolean;
   onToggleMoonFocus: () => void;
+}
+
+// --- EXTRACTED COMPONENT FOR REPEATING STAT FIELDS ---
+interface Ui5StatFieldProps {
+  iconName: string;
+  iconColor: string;
+  label: string;
+  value: string | number;
+  state?: React.ComponentPropsWithoutRef<typeof ObjectStatus>['state'];
+}
+
+function Ui5StatField({ iconName, iconColor, label, value, state }: Ui5StatFieldProps) {
+  return (
+    <FlexBox alignItems="Center" style={{ gap: '0.5rem' }}>
+      <Icon name={iconName} style={{ color: iconColor }} />
+      <Label>{label}:</Label>
+      <ObjectStatus state={state} style={{ fontWeight: 'bold' }}>
+        {value}
+      </ObjectStatus>
+    </FlexBox>
+  );
+}
+
+// --- EXTRACTED COMPONENT FOR REPEATING INFO SECTIONS ---
+interface Ui5InfoSectionProps {
+  label: string;
+  text: string;
+}
+
+function Ui5InfoSection({ label, text }: Ui5InfoSectionProps) {
+  return (
+    <div>
+      <Label style={{ fontWeight: 'bold' }}>{label}:</Label>
+      <Text style={{ display: 'block', fontSize: '13px', marginTop: '0.25rem' }}>{text}</Text>
+    </div>
+  );
 }
 
 export default function Ui5DetailPanel({
@@ -98,46 +150,53 @@ export default function Ui5DetailPanel({
             className="w-full rounded-md border mb-3 object-cover" 
             style={{ height: '180px', borderColor: 'var(--sapGroup_BorderColor, #e5e5e5)' }}
           />
-          <Text style={{ lineHeight: '1.5', fontSize: '14px' }}>{description}</Text>
+          <Text style={{ lineHeight: '1.5', fontSize: '14px', marginBottom: '0.75rem' }}>{description}</Text>
+          <Link 
+            href={getWikipediaUrl(title)} 
+            target="_blank" 
+            style={{ alignSelf: 'Start' }}
+          >
+            Mehr auf Wikipedia erfahren
+          </Link>
         </FlexBox>
       </Card>
 
       {/* Grid of Key Stats */}
       <Card header={<CardHeader titleText="Wissenschaftliche Daten" />} className="mb-4">
         <FlexBox direction="Column" style={{ padding: '1rem', gap: '0.75rem' }}>
-          <FlexBox alignItems="Center" style={{ gap: '0.5rem' }}>
-            <Icon name="temperature" style={{ color: '#ef4444' }} />
-            <Label>Temperatur:</Label>
-            <ObjectStatus state="Critical" style={{ fontWeight: 'bold' }}>{temp}</ObjectStatus>
-          </FlexBox>
+          <Ui5StatField
+            iconName="temperature"
+            iconColor="#ef4444"
+            label="Temperatur"
+            value={temp}
+            state="Critical"
+          />
 
-          <FlexBox alignItems="Center" style={{ gap: '0.5rem' }}>
-            <Icon name="globe" style={{ color: '#3b82f6' }} />
-            <Label>Durchmesser:</Label>
-            <ObjectStatus state="Information" style={{ fontWeight: 'bold' }}>
-              {diameter.toLocaleString('de-DE')} km
-            </ObjectStatus>
-          </FlexBox>
+          <Ui5StatField
+            iconName="globe"
+            iconColor="#3b82f6"
+            label="Durchmesser"
+            value={`${diameter.toLocaleString('de-DE')} km`}
+            state="Information"
+          />
 
           {selectedPlanet && (
             <>
-              <FlexBox alignItems="Center" style={{ gap: '0.5rem' }}>
-                <Icon name="measure" style={{ color: '#10b981' }} />
-                <Label>Sonnenabstand:</Label>
-                <ObjectStatus state="None" style={{ fontWeight: 'bold' }}>
-                  {selectedPlanet.distanceFromSunAU} AE
-                </ObjectStatus>
-              </FlexBox>
+              <Ui5StatField
+                iconName="measure"
+                iconColor="#10b981"
+                label="Sonnenabstand"
+                value={`${selectedPlanet.distanceFromSunAU} AE`}
+              />
 
-              <FlexBox alignItems="Center" style={{ gap: '0.5rem' }}>
-                <Icon name="legend" style={{ color: '#f59e0b' }} />
-                <Label>Umlaufzeit:</Label>
-                <ObjectStatus state="None" style={{ fontWeight: 'bold' }}>
-                  {selectedPlanet.orbitalPeriodDays >= 365
-                    ? `${(selectedPlanet.orbitalPeriodDays / 365).toFixed(1)} Jahre`
-                    : `${selectedPlanet.orbitalPeriodDays} Tage`}
-                </ObjectStatus>
-              </FlexBox>
+              <Ui5StatField
+                iconName="legend"
+                iconColor="#f59e0b"
+                label="Umlaufzeit"
+                value={selectedPlanet.orbitalPeriodDays >= 365
+                  ? `${(selectedPlanet.orbitalPeriodDays / 365).toFixed(1)} Jahre`
+                  : `${selectedPlanet.orbitalPeriodDays} Tage`}
+              />
             </>
           )}
         </FlexBox>
@@ -146,18 +205,9 @@ export default function Ui5DetailPanel({
       {/* Cards for Atmosphere, Surface and History */}
       <Card header={<CardHeader titleText="Physikalische Eigenschaften" />} className="mb-4">
         <FlexBox direction="Column" style={{ padding: '1rem', gap: '1rem' }}>
-          <div>
-            <Label style={{ fontWeight: 'bold' }}>Atmosphäre:</Label>
-            <Text style={{ display: 'block', fontSize: '13px', marginTop: '0.25rem' }}>{atmosphere}</Text>
-          </div>
-          <div>
-            <Label style={{ fontWeight: 'bold' }}>Geologie & Oberfläche:</Label>
-            <Text style={{ display: 'block', fontSize: '13px', marginTop: '0.25rem' }}>{surface}</Text>
-          </div>
-          <div>
-            <Label style={{ fontWeight: 'bold' }}>Geschichte & Entdeckung:</Label>
-            <Text style={{ display: 'block', fontSize: '13px', marginTop: '0.25rem' }}>{discoveryText}</Text>
-          </div>
+          <Ui5InfoSection label="Atmosphäre" text={atmosphere} />
+          <Ui5InfoSection label="Geologie & Oberfläche" text={surface} />
+          <Ui5InfoSection label="Geschichte & Entdeckung" text={discoveryText} />
         </FlexBox>
       </Card>
 
